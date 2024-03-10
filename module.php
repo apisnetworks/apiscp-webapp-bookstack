@@ -74,12 +74,12 @@
 			$oldversion = $this->get_version($hostname, $path) ?? $version;
 
 			$ret = $this->downloadVersion($approot, $version);
-			$this->execComposer($approot, 'install --no-dev');
 			if ($version && $oldversion === $version || !$ret) {
 				return error("Failed to update %(name)s from `%(old)s' to `%(new)s', check composer.json for version restrictions",
 					['name' => static::APP_NAME, 'old' => $oldversion, 'new' => $version]
 				);
 			}
+			$ret = $this->execComposer($approot, 'install -o --no-dev');
 
 			$this->postUpdate($hostname, $path);
 			parent::setInfo($docroot, [
@@ -194,7 +194,7 @@
 		private function versionMeta(string $version): ?array
 		{
 			return array_first($this->fetchPackages(), static function ($meta) use ($version) {
-				return $meta['version'] === $version;
+				return version_compare($meta['version'], $version, '=');
 			});
 		}
 
