@@ -145,7 +145,15 @@
 			$versions = array_filter(
 				(new Webapps\VersionFetcher\Github)->setVersionField('tag_name')->fetch(
 					'BookStackApp/BookStack',
-					fn($version) => $version[0] === 'v' && $version !== 'v24.02.1' ? $version : null
+					function(&$item) {
+						$version = $item['version'];
+						if ($version[0] !== 'v' || $version === 'v24.02.1') {
+							return false;
+						}
+
+						$item['version'] = substr($version, 1);
+						return true;
+					}
 				)
 			);
 			$cache->set($key, $versions, 43200);
