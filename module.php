@@ -183,7 +183,7 @@
 					'version' => $version
 				]);
 			}
-			$dlUrl = array_first($meta['assets'], static function ($asset) {
+			$dlUrl = \Illuminate\Support\Arr::first($meta['assets'], static function ($asset) {
 				return substr($asset['name'], -4) === '.zip';
 			});
 			$dlUrl = $dlUrl['browser_download_url'] ?? $meta['zipball_url'];
@@ -206,7 +206,7 @@
 		 */
 		private function versionMeta(string $version): ?array
 		{
-			return array_first($this->fetchPackages(), static function ($meta) use ($version) {
+			return \Illuminate\Support\Arr::first($this->fetchPackages(), static function ($meta) use ($version) {
 				return version_compare($meta['version'], $version, '=');
 			});
 		}
